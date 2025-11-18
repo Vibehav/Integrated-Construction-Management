@@ -8,6 +8,7 @@ public class IcmsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(IcmsApplication.class, args);
+		// ok
 	}
 
 }
