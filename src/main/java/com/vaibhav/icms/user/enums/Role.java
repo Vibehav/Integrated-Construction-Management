@@ -7,5 +7,5 @@ public enum Role {
     SAFETY_OFFICER,
     ACCOUNTANT,
     STORE_KEEPER,
-    COTRACTOR
+    CONTRACTOR
 }
