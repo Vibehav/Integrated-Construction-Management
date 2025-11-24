@@ -4,9 +4,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 import com.vaibhav.icms.user.enums.Role;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateUserRequest {
 
     // This DTO is used when creating a new user.
@@ -30,39 +37,4 @@ public class CreateUserRequest {
     private Role role;
 
 
-    // Getters and Setters
-    public String getEmail(String email) { // get email
-        return email;
-    }
-    public void setEmail(String email) { // set email
-        this.email = email;
-    }
-
-    public String getName(String name){  // get name
-        return name;
-    }
-    public void setName(String name){ // set name
-        this.name = name;
-    }
-
-    public String getPassword(String password){ // get password
-        return password;
-    }
-    public void setPassword(String password){ // set password
-        this.password = password;
-    }
-
-    public String getPhone(String phone){ // get phone
-        return phone;
-    }
-    public void setPhone(String phone){ // set phone
-        this.phone = phone;
-    }
-
-    public Role getRole(Role role){    // get role
-        return role;
-    }
-    public void setRole(Role role){  // set role
-        this.role = role;
-    }
 }
