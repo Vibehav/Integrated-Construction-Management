@@ -31,6 +31,7 @@ public class UserService {
             throw new RuntimeException("Email already exists");
         }
 
+        //dto to entity
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -47,7 +48,7 @@ public class UserService {
         return mapToResponse(savedUser);
     }
 
-
+    //return as list 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
