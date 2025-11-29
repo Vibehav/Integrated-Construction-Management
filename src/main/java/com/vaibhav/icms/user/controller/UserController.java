@@ -8,7 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,8 +26,9 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/create")
-    public UserResponse createUser(@Valid @RequestBody CreateUserRequest request){
-        return userService.createUser(request);
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request){
+        UserResponse obj = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(obj);
     }
 
     @GetMapping("/getall")

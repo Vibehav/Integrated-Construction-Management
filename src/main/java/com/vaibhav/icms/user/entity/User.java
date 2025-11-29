@@ -2,6 +2,7 @@ package com.vaibhav.icms.user.entity;
 
 import com.vaibhav.icms.user.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -21,11 +22,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true,nullable = false)
+    @Email
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     private String phone;

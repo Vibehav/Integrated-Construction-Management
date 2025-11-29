@@ -3,6 +3,7 @@ package com.vaibhav.icms.user.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,8 @@ public class CreateUserRequest {
     @Size(min = 6, message = "Password kam se kam 6 characters ka hona chahiye")
     private String password;
 
+    @NotBlank
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phone;
 
     @NotNull(message = "Role specify karna zaroori hai")
