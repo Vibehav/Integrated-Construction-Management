@@ -1,11 +1,15 @@
 package com.vaibhav.icms.user.service;
 
 
+
 import java .util.ArrayList;
 import java.util.List;
 
+
 import com.vaibhav.icms.user.entity.User;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,12 +23,11 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
-    //to check if email exists, save in db
+
     private final UserRepository userRepository;
-    // encoding password
-    private final PasswordEncoder passwordEncoder; // to be written in security config file
+    private final PasswordEncoder passwordEncoder;
     
     public UserResponse createUser(CreateUserRequest request){
 
@@ -38,7 +41,9 @@ public class UserService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setRole(request.getRole());
+        user.setRoles(request.getRoles());
+
+
        // user.setCreatedAt(LocalDateTime.now());
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -62,13 +67,6 @@ public class UserService {
         return responseList;
     }
 
-    // public List<UserResponse> getAllUsers() {
-    //     return userRepository.findAll()
-    //             .stream()
-    //             .map(this::mapToResponse)
-    //             .collect(Collectors.toList());
-    // }
-
     public UserResponse getUserById(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found with id:" + id));
         return mapToResponse(user);
@@ -91,7 +89,7 @@ public class UserService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setRole(request.getRole());
+        user.setRoles(request.getRoles());
 
         //only update if provided
         if(request.getPassword() != null && !request.getPassword().isEmpty()){
@@ -109,7 +107,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-
+    @Override // UserDetailsService is a Spring Security interface used to load a user from the database during authentication.
+    public UserDetails loadUserByUsername(String email){
+        return userRepository.findByEmail(email)
+               .orElseThrow(() -> new UsernameNotFoundException("username not found"));
+    }
 
     // Helper: Convert User → UserResponse
 
@@ -119,7 +121,7 @@ public class UserService {
         response.setName(user.getName());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
-        response.setRole(user.getRole());
+        response.setRoles(user.getRoles());
         return response;
     }
     

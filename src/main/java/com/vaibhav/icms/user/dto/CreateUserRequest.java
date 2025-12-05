@@ -1,5 +1,9 @@
 package com.vaibhav.icms.user.dto;
 
+import java.util.Set;
+
+import com.vaibhav.icms.user.enums.Role;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,9 +12,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-
-import com.vaibhav.icms.user.enums.Role;
 
 @Data
 @AllArgsConstructor
@@ -37,7 +38,8 @@ public class CreateUserRequest {
     private String phone;
 
     @NotNull(message = "Role specify karna zaroori hai")
-    private Role role;
+    private Set<Role> roles;
+
 
 
 }

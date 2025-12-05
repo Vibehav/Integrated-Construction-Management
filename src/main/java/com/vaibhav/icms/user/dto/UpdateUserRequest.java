@@ -1,5 +1,7 @@
 package com.vaibhav.icms.user.dto;
 
+import java.util.Set;
+
 import com.vaibhav.icms.user.enums.Role;
 
 import jakarta.validation.constraints.Email;
@@ -19,5 +21,6 @@ public class UpdateUserRequest {
 
     private String phone;
 
-    private Role role;
+    private Set<Role> roles;
+
 }

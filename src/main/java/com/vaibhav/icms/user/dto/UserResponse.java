@@ -1,11 +1,12 @@
 package com.vaibhav.icms.user.dto;
 
+import java.util.Set;
+
 import com.vaibhav.icms.user.enums.Role;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 
 @Data
@@ -18,6 +19,7 @@ public class UserResponse {
     private String name;
     private String email;
     private String phone;
-    private Role role;
+    private Set<Role> roles;
+
     
 }
