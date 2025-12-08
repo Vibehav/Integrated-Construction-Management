@@ -1,4 +1,4 @@
-package com.vaibhav.icms.user.dto;
+package com.vaibhav.icms.auth.dto;
 
 import java.util.Set;
 
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserRequest {
+public class RegisterRequest {
 
     // This DTO is used when creating a new user.
     // name, email, password are mandatory fields
