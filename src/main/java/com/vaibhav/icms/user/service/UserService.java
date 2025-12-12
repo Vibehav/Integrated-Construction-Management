@@ -85,10 +85,10 @@ public class UserService implements UserDetailsService {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setRoles(request.getRoles());
+        if(request.getName() != null && !request.getName().isEmpty())user.setName(request.getName());
+        if(request.getEmail() != null && !request.getEmail().isEmpty())user.setEmail(request.getEmail());
+        if(request.getPhone() != null && !request.getPhone().isEmpty())user.setPhone(request.getPhone());
+        if(request.getRoles() != null)user.setRoles(request.getRoles());
 
         //only update if provided
         if(request.getPassword() != null && !request.getPassword().isEmpty()){
