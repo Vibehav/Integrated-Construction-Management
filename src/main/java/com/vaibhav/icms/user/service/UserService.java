@@ -5,20 +5,19 @@ package com.vaibhav.icms.user.service;
 import java .util.ArrayList;
 import java.util.List;
 
-
-import com.vaibhav.icms.user.entity.User;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.vaibhav.icms.exception.EmailAlreadyExistsException;
 import com.vaibhav.icms.user.dto.CreateUserRequest;
 import com.vaibhav.icms.user.dto.UpdateUserRequest;
-import com.vaibhav.icms.exception.EmailAlreadyExistsException;
 import com.vaibhav.icms.user.dto.UserResponse;
+import com.vaibhav.icms.user.entity.User;
 import com.vaibhav.icms.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
