@@ -7,8 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.vaibhav.icms.project.dto.CreateProjectRequest;
 import com.vaibhav.icms.project.dto.ProjectResponse;
+import com.vaibhav.icms.project.dto.ProjectSummaryResponse;
 import com.vaibhav.icms.project.dto.UpdateProjectRequest;
-import com.vaibhav.icms.project.entity.Projects;
+import com.vaibhav.icms.project.entity.Project;
 import com.vaibhav.icms.project.repository.ProjectRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class ProjectService {
     public ProjectResponse createProject(CreateProjectRequest request){
 
 
-        Projects project = Projects.builder()
+        Project project = Project.builder()
                                     .name(request.getName())
                                     .clientName(request.getClientName())
                                     .location(request.getLocation())
@@ -39,7 +40,7 @@ public class ProjectService {
     }
     // update project
     public ProjectResponse updateProject(Long id,UpdateProjectRequest request){
-        Projects project = projectRepository.findById(id)
+        Project project = projectRepository.findById(id)
                                             .orElseThrow(() -> new RuntimeException("Id Not Found" + id));
 
         
@@ -58,16 +59,16 @@ public class ProjectService {
 
    // get Project
     public ProjectResponse getProject(Long id){
-        Projects project = projectRepository.findById(id)
+        Project project = projectRepository.findById(id)
                                             .orElseThrow(() -> new RuntimeException("Project Id doesn't exists" + id));
         return mapToResponse(project);
     }
 
     //list all projects
     public List<ProjectResponse> listProjects(){
-        List<Projects> projects = projectRepository.findAll();
+        List<Project> projects = projectRepository.findAll();
         List<ProjectResponse> listAllProjects = new ArrayList<>();
-        for(Projects proj:projects){
+        for(Project proj:projects){
             ProjectResponse response = mapToResponse(proj);
             listAllProjects.add(response);
         }
@@ -84,8 +85,8 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
-
-    public ProjectResponse mapToResponse(Projects project){
+    
+    public ProjectResponse mapToResponse(Project project){
         ProjectResponse response = new ProjectResponse();
         response.setId(project.getId());
         response.setName(project.getName());
@@ -98,6 +99,21 @@ public class ProjectService {
     
         return response;
     }
+
+    // to list projeccts for users
+    public List<ProjectSummaryResponse> getMyProjects(Long userId) {
+
+    return projectRepository.findByMembersUserId(userId)
+            .stream()
+            .map(p -> new ProjectSummaryResponse(
+                    p.getId(),
+                    p.getProjectCode(),
+                    p.getName(),
+                    p.getStatus().name()
+            ))
+            .toList();
+}
+
 }
 
 

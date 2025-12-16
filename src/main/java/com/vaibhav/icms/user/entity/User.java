@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.vaibhav.icms.projectmember.entity.ProjectMember;
 import com.vaibhav.icms.user.enums.Role;
 
 import jakarta.persistence.Column;
@@ -23,6 +24,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -82,20 +84,8 @@ public class User implements UserDetails {
         return email;  // we will be using email as username
     }
 
-    @Override
-    public boolean isAccountNonExpired() { return true; }
+  
 
-    @Override
-    public boolean isAccountNonLocked() { return true; }
-
-    @Override
-    public boolean isCredentialsNonExpired() { return true; }
-
-    @Override
-    public boolean isEnabled() { return true; }
+    @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+    private List<ProjectMember> projectMembership = new ArrayList<>();
 }
-
-        // @Override
-        // public Collection<? extends GrantedAuthority> getAuthorities(){
-        //     return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-        // }
