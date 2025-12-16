@@ -87,5 +87,6 @@ public class User implements UserDetails {
   
 
     @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+    @Builder.Default
     private List<ProjectMember> projectMembership = new ArrayList<>();
 }
