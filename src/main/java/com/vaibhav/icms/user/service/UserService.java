@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.vaibhav.icms.exception.EmailAlreadyExistsException;
 import com.vaibhav.icms.user.dto.CreateUserRequest;
+import com.vaibhav.icms.user.dto.ProfileUpdateRequest;
+import com.vaibhav.icms.user.dto.ProfileUpdateResponse;
 import com.vaibhav.icms.user.dto.UpdateUserRequest;
 import com.vaibhav.icms.user.dto.UserResponse;
 import com.vaibhav.icms.user.entity.User;
@@ -124,6 +126,33 @@ public class UserService implements UserDetailsService {
         return response;
     }
     
-}   
-// roles
-//
+
+
+    //   Update User Profile
+    // =======================
+    public ProfileUpdateResponse updateMyProfile(Long id,ProfileUpdateRequest update){
+        
+         User user = userRepository.findById(id)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found with id" + id));
+        
+        ProfileUpdateResponse response = new ProfileUpdateResponse();
+        boolean updated = false;
+
+        if(update.getPhone()!=null && !update.getPhone().isEmpty()) { 
+            user.setPhone(update.getPhone());
+            response.setPhone(user.getPhone());
+            updated = true;
+        }
+        if(update.getPassword()!=null && !update.getPassword().isEmpty()){
+             user.setPassword(passwordEncoder.encode(update.getPassword()));
+            updated = true;
+        }
+
+        if(updated) {
+            userRepository.save(user);
+        }
+
+        return response;
+    }
+
+} 

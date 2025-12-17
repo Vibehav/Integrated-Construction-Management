@@ -9,7 +9,7 @@ public class ProjectSummaryResponse {
 
     private Long id;
     private String name;
-    private String projectCode;
+    private String prjectCode;
     private String status;
     
     
