@@ -21,14 +21,15 @@ Built with **Java 21** and **Spring Boot 3**, ICMS demonstrates enterprise-grade
 ### 🔏 Authentication & Security
 ### ☑️ RBAC + JWT
 - Stateless JWT Authentication  
-- Role-Based Access Control (RBAC)  
+- Role-Based Access Control (RBAC) using Spring Security
 - BCrypt-based password hashing  
-- Strict access control based on user role & project membership  
+- Secure access using both **global roles** and **project-level roles**  
 - Endpoints: `/auth/login`, `/auth/register`, `/me`
 
 ### Project Module 
-- Introduces the Project entity with name, client, location, dates, status, and planned budget.
-- Provides secure CRUD APIs for creating, updating, listing, and deleting projects.
+- Introduces the Project entity with Project Name, Client, Location, Start Date, Status, and Planned Budget.
+- Secure CRUD APIs: Create / Update / Get / List / Delete projects
+- Role-restricted access: ADMIN, PROJECT_MANAGER, ACCOUNTANT
 - Uses a ProjectStatus enum (PLANNED, ACTIVE, ON_HOLD, COMPLETED) with auditing timestamps.
 - Prepares foundation for upcoming modules like project members, tasks, and assignments.
 
