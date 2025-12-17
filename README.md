@@ -37,7 +37,7 @@ Built with **Java 21** and **Spring Boot 3**, ICMS demonstrates enterprise-grade
 
 ## 📈 Roadmap
 
-* [-] **Phase 1:** Foundation, Auth, Security Configuration, RBAC core.
-* [ ] **Phase 2:** Project Management (System Foundation).
+* [x] **Phase 1:** Foundation, Auth, Security Configuration, RBAC core.
+* [x] **Phase 2:** Project Management (System Foundation).
 * [ ] **Phase 3:** Task Management (Daily Operations).
 * [ ] **Phase 4:** Materials, Inventory & Requests (Construction-specific core).
