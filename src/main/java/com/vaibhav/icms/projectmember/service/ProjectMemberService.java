@@ -113,5 +113,11 @@ public class ProjectMemberService {
                                   .build();
 
     }
+
+    // USED IN DIFFERENT CLASSES
+
+    public ProjectMember getMemberByProjectIdAndUserId(Long projectId,Long userId){
+        return projectMemberRepository.findByProjectIdAndUserId(projectId,userId).orElseThrow(()-> new RuntimeException("member not found in project"));
+    }
     
 }

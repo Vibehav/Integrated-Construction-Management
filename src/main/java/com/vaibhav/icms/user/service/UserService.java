@@ -155,4 +155,9 @@ public class UserService implements UserDetailsService {
         return response;
     }
 
+   
+    public User getUser(Long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found with id:" + id));
+        return user;
+    }
 } 
