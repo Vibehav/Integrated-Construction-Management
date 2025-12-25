@@ -1,0 +1,32 @@
+### ======================
+### ADD MEMBER TO PROJECT
+### ======================
+POST {{baseUrl}}/projects/{{projectId}}/members
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "userId": 3,
+  "role": "ACCOUNTANT"
+}
+
+
+> {%
+    if (response.status === 201) {
+        client.global.set("projectId", response.body.id);
+    }
+%}
+
+### ======================
+### GET PROJECT MEMBERS
+### ======================
+GET {{baseUrl}}/projects/{{projectId}}/members
+Authorization: Bearer {{token}}
+
+
+
+### ======================
+### REMOVE PROJECT MEMBER
+### ======================
+DELETE {{baseUrl}}/projects/{{projectId}}/members/{{userId}}
+Authorization: Bearer {{token}}

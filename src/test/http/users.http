@@ -1,0 +1,62 @@
+### ======================
+### CREATE USER (ADMIN)
+### ======================
+POST {{baseUrl}}/users/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Accountant User",
+  "email": "acc@gmail.com",
+  "password": "acc123",
+  "roles": ["ACCOUNTANT"]
+}
+
+### ======================
+### GET ALL USERS
+### ======================
+GET {{baseUrl}}/users/getall
+Authorization: Bearer {{token}}
+
+### ======================
+### GET USER BY ID
+### ======================
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{token}}
+
+### ======================
+### GET USER BY EMAIL
+### ======================
+GET {{baseUrl}}/users/email/admin@gmail.com
+Authorization: Bearer {{token}}
+
+### ======================
+### UPDATE USER (ADMIN)
+### ======================
+PUT {{baseUrl}}/users/update/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Updated Name",
+  "roles": ["PROJECT_MANAGER"]
+}
+
+### ======================
+### DELETE USER
+### ======================
+DELETE {{baseUrl}}/users/delete/1
+Authorization: Bearer {{token}}
+
+
+### ======================
+### UPDATE MY PROFILE
+### ======================
+PUT {{baseUrl}}/users/updateProfile/3
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "phone": "9999999999",
+  "password": "newPassword123"
+}

@@ -19,13 +19,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByProjectIdAndDeletedFalse(Long projectId);
 
 
-    /*
-    Used for filters:
-        TODO
-        IN_PROGRESS
-        BLOCKED
-        DONE
-    */ // Task of this project with this status
+ // Task of this project with this status
     List<Task> findByProjectIdAndStatusAndDeletedFalse(Long projectId,TaskStatus status);
 
     // Task assigned to a particular user in the project

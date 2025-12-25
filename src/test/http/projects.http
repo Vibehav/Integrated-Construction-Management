@@ -1,0 +1,64 @@
+### ============================
+### PROJECTS API
+### ============================
+
+
+### ======================
+### CREATE PROJECT (Admin ,Project Manager)
+### ======================
+POST {{baseUrl}}/projects/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "ICMS Tower A",
+  "clientName": "Lodha Group",
+  "location": "Mumbai",
+  "startDate": "2025-01-15",
+  "status": "PLANNED",
+  "budgetPlanned": 25000000.00
+}
+
+
+> {%
+    if (response.status === 201) {
+        client.global.set("projectId", response.body.id);
+    }
+%}
+
+### ======================
+### UPDATE PROJECT
+### ======================
+PUT {{baseUrl}}/projects/update/{{projectId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "ACTIVE",
+  "budgetPlanned": 30000000.00
+}
+
+
+### ----------------------------
+
+### Get project by ID
+GET {{baseUrl}}/projects/get/{{projectId}}
+Authorization: Bearer {{token}}
+
+### ----------------------------
+
+### Get all projects
+GET {{baseUrl}}/projects/getall
+Authorization: Bearer {{token}}
+
+### ----------------------------
+
+### Delete project (ADMIN ONLY)
+DELETE {{baseUrl}}/projects/delete/{{projectId}}
+Authorization: Bearer {{token}}
+
+### ----------------------------
+
+### Get my projects
+GET {{baseUrl}}/projects/my
+Authorization: Bearer {{token}}

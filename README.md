@@ -7,13 +7,13 @@ Built with **Java 21** and **Spring Boot 3**, ICMS demonstrates enterprise-grade
 
 ## 🚀 Tech Stack
 
-| Category | Technology |
-|---------|------------|
-| **Language** | Java 21 |
-| **Framework** | Spring Boot 3.x |
-| **Database** | PostgreSQL |
-| **Security** | Spring Security 6 + JWT |
-| **Build Tool** | Maven |
+| Category | Technology                            |
+|---------|---------------------------------------|
+| **Language** | Java 21                               |
+| **Framework** | Spring Boot 6.5.6                     |
+| **Database** | PostgreSQL                            |
+| **Security** | Spring Security 6 + JWT               |
+| **Build Tool** | Maven                                 |
 | **Other** | JPA/Hibernate, Lombok, Validation API |
 
 ---
