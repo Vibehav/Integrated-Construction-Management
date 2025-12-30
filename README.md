@@ -33,6 +33,16 @@ Built with **Java 21** and **Spring Boot 3**, ICMS demonstrates enterprise-grade
 - Uses a ProjectStatus enum (PLANNED, ACTIVE, ON_HOLD, COMPLETED) with auditing timestamps.
 - Prepares foundation for upcoming modules like project members, tasks, and assignments.
 
+### Task Management Module (Phase 3 – Daily Operations)
+- Project-scoped task creation, update, assignment, and soft deletion
+- Strict **role-based access** using project membership and project roles
+- Tasks can be created by Project Managers and Site Engineers
+- Task assignment restricted to **authorized roles** and valid project members
+- Supervisors can update task status only for assigned tasks
+- **Admin** and **Super Manager** have global override permissions
+- Controlled task status transitions using `TaskStatus` enum
+- Prevents invalid operations such as updating completed or unassigned tasks
+- Authorization enforced at the service layer for business safety
 
 ---
 
@@ -40,5 +50,5 @@ Built with **Java 21** and **Spring Boot 3**, ICMS demonstrates enterprise-grade
 
 * [x] **Phase 1:** Foundation, Auth, Security Configuration, RBAC core.
 * [x] **Phase 2:** Project Management (System Foundation).
-* [ ] **Phase 3:** Task Management (Daily Operations).
+* [x] **Phase 3:** Task Management (Daily Operations).
 * [ ] **Phase 4:** Materials, Inventory & Requests (Construction-specific core).
