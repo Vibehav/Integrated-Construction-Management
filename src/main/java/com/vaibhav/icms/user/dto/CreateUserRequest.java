@@ -37,7 +37,7 @@ public class CreateUserRequest {
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phone;
 
-    @NotNull(message = "Please Select atleast one Roel")
+    @NotNull(message = "Please Select atleast one Role")
     private Set<Role> roles;
 
 

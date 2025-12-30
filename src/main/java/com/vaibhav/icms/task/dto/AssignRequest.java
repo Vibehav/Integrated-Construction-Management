@@ -1,7 +1,5 @@
 package com.vaibhav.icms.task.dto;
 
-import com.vaibhav.icms.task.enums.TaskStatus;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +8,6 @@ import lombok.NoArgsConstructor;
 public class AssignRequest {
 
   private Long assigneeId;
-
-  private TaskStatus status;
-    
 }
 /*
 {

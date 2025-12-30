@@ -17,10 +17,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
-
-    // This DTO is used when creating a new user.
-    // name, email, password are mandatory fields
-    // phone and role.
     
     @NotBlank(message = "Name cannot be blank")
     private String name;
@@ -29,7 +25,7 @@ public class RegisterRequest {
     @Email(message = "Enter a Valid Email")
     private String email;
 
-    @NotBlank(message = "Enter your Passsword")
+    @NotBlank(message = "Enter your Password")
     @Size(min = 6, message = "The Password Should be greater than 6 characters")
     private String password;
 
@@ -37,7 +33,6 @@ public class RegisterRequest {
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phone;
 
-    @NotNull(message = "Please Select atleast one Roel")
     private Set<Role> roles;
 
 

@@ -16,6 +16,7 @@ import com.vaibhav.icms.auth.util.JwtUtil;
 import com.vaibhav.icms.exception.EmailAlreadyExistsException;
 import com.vaibhav.icms.user.entity.User;
 import com.vaibhav.icms.user.enums.Role;
+import com.vaibhav.icms.user.service.UserService;
 import com.vaibhav.icms.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
     //  AUTHENTICATE CREDENTIALS 
@@ -43,7 +45,7 @@ public class AuthService {
             )
         );
 
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(()-> new RuntimeException("user not found"));
+        User user = userService.getUserByMail(request.getEmail());
 
         String token = jwtUtil.generateToken(user);
 
@@ -73,9 +75,11 @@ public class AuthService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        
+
+        if(request.getRoles() != null) {
         Set<Role> roles = request.getRoles();
         user.setRoles(roles);
+        }
 
         user.setPassword(passwordEncoder.encode(request.getPassword())); //Encide and set password
 

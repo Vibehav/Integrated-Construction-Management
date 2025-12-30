@@ -6,7 +6,7 @@ create table user_roles
     roles   varchar(255)
         constraint user_roles_roles_check
             check ((roles)::text = ANY
-                   ((ARRAY ['ADMIN'::character varying, 'PROJECT_MANAGER'::character varying, 'SITE_ENGINEER'::character varying, 'SAFETY_OFFICER'::character varying, 'ACCOUNTANT'::character varying, 'STORE_KEEPER'::character varying, 'CONTRACTOR'::character varying])::text[]))
+                   ((ARRAY ['ADMIN'::character varying, 'SUPER_MANAGER'::character varying, 'SITE_ENGINEER'::character varying, 'SAFETY_OFFICER'::character varying, 'ACCOUNTANT'::character varying, 'STORE_KEEPER'::character varying, 'CONTRACTOR'::character varying])::text[]))
 );
 
 alter table user_roles

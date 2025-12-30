@@ -13,12 +13,9 @@ import com.vaibhav.icms.project.entity.Project;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    Optional<Project> findByProjectCode(String projectCode);
     Optional<Project> findById(Long id);
 
     boolean existsById(Long id);
-    boolean existsByName(String name); 
-    boolean existsByProjectCode(String projectCode);
 
     //Spring reads it like Project-> user → id
     List<Project> findByMembersUserId(Long userId);

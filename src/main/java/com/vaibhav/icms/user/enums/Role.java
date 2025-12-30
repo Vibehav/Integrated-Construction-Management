@@ -2,9 +2,7 @@ package com.vaibhav.icms.user.enums;
 
 public enum Role {
     ADMIN,
-    PROJECT_MANAGER,
-    SITE_ENGINEER,
-    SAFETY_OFFICER,
+    SUPER_MANAGER,
     ACCOUNTANT,
     STORE_KEEPER,
     CONTRACTOR

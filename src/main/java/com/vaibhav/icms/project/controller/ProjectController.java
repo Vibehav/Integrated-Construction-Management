@@ -25,12 +25,6 @@ import com.vaibhav.icms.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-
-
-
-
-
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/projects")
@@ -40,41 +34,44 @@ public class ProjectController {
 
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('ADMIN' ,'PROJECT_MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN' ,'SUPER_MANAGER')")
     public ResponseEntity<ProjectResponse> createProject(@Valid @RequestBody CreateProjectRequest request){
         ProjectResponse response = projectService.createProject(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/update/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN' ,'PROJECT_MANAGER')")
-    public ResponseEntity<ProjectResponse> updateProject(@PathVariable Long id,@RequestBody UpdateProjectRequest request){
-        ProjectResponse response = projectService.updateProject(id, request);
+    @PutMapping("/update/{projectId}")
+    @PreAuthorize("hasAnyRole('ADMIN' ,'SUPER_MANAGER')")
+    public ResponseEntity<ProjectResponse> updateProject(@PathVariable Long projectId,
+                                                         @RequestBody UpdateProjectRequest request,
+                                                         @AuthenticationPrincipal User user){
+        ProjectResponse response = projectService.updateProject(projectId, request,user);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/get/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','PROJECT_MANAGER','ACCOUNTANT')")
-    public ResponseEntity<ProjectResponse> getProject(@PathVariable Long id){
-        ProjectResponse response = projectService.getProject(id);
+    @GetMapping("/get/{projectId}")
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_MANAGER','ACCOUNTANT')")
+    public ResponseEntity<ProjectResponse> getProject(@PathVariable Long projectId){
+        ProjectResponse response = projectService.getProject(projectId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/getall")
-    @PreAuthorize("hasAnyRole('ADMIN' ,'PROJECT_MANAGER','ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ADMIN' ,'SUPER_MANAGER','ACCOUNTANT')")
     public ResponseEntity<List<ProjectResponse>> listProjects(){
         List<ProjectResponse> response = projectService.listProjects();
         return ResponseEntity.ok(response);
     }
     
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/{projectId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id){
-        projectService.deleteProject(id);
+    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId){
+        projectService.deleteProject(projectId);
         return ResponseEntity.noContent().build(); //204
     }
 
     // User can view their projects
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/my")
     public ResponseEntity<List<ProjectSummaryResponse>> getMyProjects(
         @AuthenticationPrincipal User user 

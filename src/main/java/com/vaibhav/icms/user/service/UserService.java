@@ -44,9 +44,6 @@ public class UserService implements UserDetailsService {
         user.setPhone(request.getPhone());
         user.setRoles(request.getRoles());
 
-
-       // user.setCreatedAt(LocalDateTime.now());
-
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         // Save in DB
@@ -159,5 +156,9 @@ public class UserService implements UserDetailsService {
     public User getUser(Long id){
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found with id:" + id));
         return user;
+    }
+    // used in auth to get users by email
+    public User getUserByMail(String email){
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Email not present."));
     }
 } 

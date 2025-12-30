@@ -1,0 +1,45 @@
+### CREATE TASK
+POST {{baseUrl}}/projects/8/tasks/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Title 2",
+  "description": "Desription 1",
+  "dueDate": "2025-12-30"
+}
+
+### ASSIGN TASK
+PUT {{baseUrl}}/projects/8/tasks/assign/4
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "assigneeId": 6
+}
+
+### UPDATE STATUS
+PUT {{baseUrl}}/projects/{{projectId}}/tasks/updateSatus/{{taskId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "IN_PROGRESS"
+}
+
+### UPDATE TASK
+PUT {{baseUrl}}/projects/8/tasks/updateTask/4
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "",
+  "description": "",
+  "dueDate": ""
+}
+
+### DELETE TASK
+DELETE {{baseUrl}}/projects/{{projectId}}/tasks/{{taskId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+

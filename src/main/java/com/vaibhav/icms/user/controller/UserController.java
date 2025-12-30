@@ -41,7 +41,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response); // 201
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'SUPER_MANAGER')")
     @GetMapping("/getall")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<UserResponse> users = userService.getAllUsers();
@@ -49,14 +49,14 @@ public class UserController {
         return ResponseEntity.ok(users);//200
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'SUPER_MANAGER')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id){
         UserResponse user = userService.getUserById(id);
         return ResponseEntity.ok(user); //200
     }
 
-    @PreAuthorize("hasRole('ADMIN')")    
+    @PreAuthorize("hasAnyRole('ADMIN' , 'SUPER_MANAGER')")
     @GetMapping("/{email}")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email){
         UserResponse user = userService.getUserByEmail(email);
@@ -79,7 +79,8 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build(); //204
     }
-    
+
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/updateProfile/{id}")
     public ResponseEntity<ProfileUpdateResponse> updateMyProfile(@PathVariable Long id, @Valid @RequestBody ProfileUpdateRequest request){
         ProfileUpdateResponse response = userService.updateMyProfile(id,request);

@@ -14,6 +14,8 @@ public class TaskResponse {
 
   private Long id;
 
+  private String title;
+
   private Long projectId;
 
   private Long assignee;

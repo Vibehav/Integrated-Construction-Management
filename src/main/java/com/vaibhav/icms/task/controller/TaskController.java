@@ -1,17 +1,11 @@
 package com.vaibhav.icms.task.controller;
 
+import com.vaibhav.icms.task.dto.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.vaibhav.icms.task.dto.AssignRequest;
-import com.vaibhav.icms.task.dto.CreateTaskRequest;
-import com.vaibhav.icms.task.dto.TaskResponse;
 import com.vaibhav.icms.task.service.TaskService;
 import com.vaibhav.icms.user.entity.User;
 
@@ -27,6 +21,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping("/create")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<TaskResponse> createTask(
         @PathVariable Long projectId,
         @RequestBody CreateTaskRequest request,
@@ -35,13 +30,55 @@ public class TaskController {
             return ResponseEntity.ok(response);
         }
 
+
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/assign/{taskId}")
-    public ResponseEntity<TaskResponse> assignTask(@PathVariable Long projectId,@PathVariable Long taskId,@RequestBody AssignRequest request){
-        TaskResponse response = taskService.assignTask(projectId, taskId, request);
+    public ResponseEntity<TaskResponse> assignTask(
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
+            @AuthenticationPrincipal User user,
+            @RequestBody AssignRequest request){
+        TaskResponse response = taskService.assignTask(projectId, taskId, user, request);
         return ResponseEntity.ok(response);
     }
-   
-    
+
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("/updateSatus/{taskId}")
+    public ResponseEntity<TaskResponse> updateStatus(
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
+            @RequestBody UpdateTaskStatusRequest request,
+            @AuthenticationPrincipal User currentUser){
+        TaskResponse response = taskService.updateStatus(projectId,taskId,request,currentUser);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @PutMapping("updateTask/{taskId}")
+    public ResponseEntity<TaskResponse> updateTask(
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
+            @RequestBody UpdateTaskRequest request,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        TaskResponse response =
+                taskService.updateTask(projectId, taskId, request, currentUser);
+        return ResponseEntity.ok(response);
+    }
+
+    // ================= DELETE TASK =================
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<Void> deleteTask(
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        taskService.deleteTask(projectId, taskId, currentUser);
+        return ResponseEntity.noContent().build();
+    }
     
 }
 /*

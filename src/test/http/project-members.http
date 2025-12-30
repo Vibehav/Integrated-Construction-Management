@@ -1,13 +1,12 @@
-### ======================
 ### ADD MEMBER TO PROJECT
 ### ======================
-POST {{baseUrl}}/projects/{{projectId}}/members
+POST {{baseUrl}}/projects/8/members
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "userId": 3,
-  "role": "ACCOUNTANT"
+  "userId": 7,
+  "role": "SITE_ENGINEER"
 }
 
 
@@ -17,16 +16,14 @@ Authorization: Bearer {{token}}
     }
 %}
 
-### ======================
 ### GET PROJECT MEMBERS
 ### ======================
-GET {{baseUrl}}/projects/{{projectId}}/members
+GET {{baseUrl}}/projects/8/members
 Authorization: Bearer {{token}}
 
 
 
-### ======================
 ### REMOVE PROJECT MEMBER
 ### ======================
-DELETE {{baseUrl}}/projects/{{projectId}}/members/{{userId}}
+DELETE {{baseUrl}}/projects/8/members/{{userId}}
 Authorization: Bearer {{token}}

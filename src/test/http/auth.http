@@ -3,7 +3,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "dummy@gmail.com",
+  "email": "user4@gmail.com",
   "password": "password123"
 }
 
@@ -12,23 +12,21 @@ Content-Type: application/json
 %}
 
 
-### =====================
-### Register (ADMIN ONLY)
-### =====================
+### Register
+### ===================== ADMIN ONLY
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "P User",
-  "email": "pm@gmai.com",
+  "name": "user5",
+  "email": "user5@gmail.com",
   "password": "password123",
-  "phone": "9820677745",
-  "roles": ["PROJECT_MANAGER"]
+  "phone": "9820677745"
 }
 
-### ======================
-### LOGOUT (STATELESS)
+
+### LOGOUT
 ### ======================
 POST {{baseUrl}}/auth/logout
 

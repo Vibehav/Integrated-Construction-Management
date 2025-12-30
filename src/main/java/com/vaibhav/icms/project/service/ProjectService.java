@@ -3,6 +3,13 @@ package com.vaibhav.icms.project.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vaibhav.icms.projectmember.entity.ProjectMember;
+import com.vaibhav.icms.projectmember.enums.ProjectRole;
+import com.vaibhav.icms.projectmember.repository.ProjectMemberRepository;
+import com.vaibhav.icms.projectmember.service.ProjectMemberService;
+import com.vaibhav.icms.user.entity.User;
+import com.vaibhav.icms.user.enums.Role;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.vaibhav.icms.project.dto.CreateProjectRequest;
@@ -19,11 +26,11 @@ import lombok.RequiredArgsConstructor;
 public class ProjectService {
     
     private final ProjectRepository projectRepository;
-    
+    private final ProjectMemberService projectMemberService;
+
 
     //create project
     public ProjectResponse createProject(CreateProjectRequest request){
-
 
         Project project = Project.builder()
                                     .name(request.getName())
@@ -39,11 +46,12 @@ public class ProjectService {
         return mapToResponse(project);
     }
     // update project
-    public ProjectResponse updateProject(Long id,UpdateProjectRequest request){
-        Project project = projectRepository.findById(id)
-                                            .orElseThrow(() -> new RuntimeException("Id Not Found" + id));
+    public ProjectResponse updateProject(Long projectId,UpdateProjectRequest request,User user){
+        Project project = projectRepository.findById(projectId)
+                                            .orElseThrow(() -> new RuntimeException("Id Not Found" + projectId));
 
-        
+        checkIsProjectManager(projectId, user);
+
         if(request.getName() != null && !request.getName().isEmpty() ) project.setName(request.getName());
         if(request.getClientName()!=null && !request.getClientName().isEmpty()) project.setClientName(request.getClientName());
         if(request.getLocation()!=null && !request.getLocation().isEmpty()) project.setLocation(request.getLocation());
@@ -57,7 +65,8 @@ public class ProjectService {
 
     }
 
-   // get Project
+
+    // get Project
     public ProjectResponse getProject(Long id){
         Project project = projectRepository.findById(id)
                                             .orElseThrow(() -> new RuntimeException("Project Id doesn't exists" + id));
@@ -85,7 +94,7 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
-    
+
     public ProjectResponse mapToResponse(Project project){
         ProjectResponse response = new ProjectResponse();
         response.setId(project.getId());
@@ -96,13 +105,21 @@ public class ProjectService {
         response.setStartDate(project.getStartDate());
         response.setStatus(project.getStatus());
         response.setBudgetPlanned(project.getBudgetPlanned());
-    
+
         return response;
     }
-
-    // to list projeccts for users
+// HELPERS
+    private void checkIsProjectManager(Long projectId, User user) {
+        if( !user.getRoles().contains(Role.SUPER_MANAGER) || !user.getRoles().contains(Role.ADMIN)) {
+            return;
+        }
+        ProjectRole role = projectMemberService.getUserRoleInProject(projectId, user.getId());
+        if(role != ProjectRole.PROJECT_MANAGER){
+            throw new AccessDeniedException("User does not have required roles to update Project.");
+        }
+    }
+    // to list projects for users
     public List<ProjectSummaryResponse> getMyProjects(Long userId) {
-
     return projectRepository.findByMembersUserId(userId)
             .stream()
             .map(p -> new ProjectSummaryResponse(

@@ -2,6 +2,10 @@ package com.vaibhav.icms.projectmember.service;
 
 import java.util.List;
 
+import com.vaibhav.icms.projectmember.enums.ProjectRole;
+import com.vaibhav.icms.user.enums.Role;
+import com.vaibhav.icms.user.service.UserService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,23 +31,25 @@ public class ProjectMemberService {
     private final ProjectMemberRepository projectMemberRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
 
     // ADD MEMBER TO PROJECT
     //=======================
-    public ProjectMemberResponse addMember(Long projectId, AddProjectMemberRequest request){
+    public ProjectMemberResponse addMember(Long projectId, AddProjectMemberRequest request,User currentUser){
+
+        checkHasAuthority(projectId, currentUser);
 
         // 1. validate project
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Project not found: " + projectId));
 
         // 2. validate user
         User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException(" User Not Found by Id: " + request.getUserId()));
-
         // 3. check duplicate memberships
         boolean exists = projectMemberRepository.existsByProjectIdAndUserId(projectId, request.getUserId());
 
         if(exists) {  // create UserAlreadyAssignedException later
-            throw new RuntimeException("Usser already part of this project");
+            throw new RuntimeException("User already part of this project");
         }
         // 4. Create ProjectMember entity
         ProjectMember member = ProjectMember.builder()
@@ -57,52 +63,43 @@ public class ProjectMemberService {
         projectMemberRepository.save(member);
 
         return mapperToResponse(member);
-        
+
     }
 
-    
+
     // REMOVE MEMBER FROM THE RELATIONSHIP
     // ===================================
     // Deleting the relationship
-    public void removeMember(Long projectId, Long userId){  
+    public void removeMember(Long projectId, Long userId, User currentUser){
 
-        ProjectMember member = projectMemberRepository.findByProjectIdAndUserId(projectId, userId).orElseThrow(() -> new RuntimeException("Project member not found- Project ID: " + projectId + " User ID: " + userId ));
+        checkHasAuthority(projectId, currentUser);
+        ProjectMember member = projectMemberRepository.findByProjectIdAndUserId(projectId, userId).orElseThrow(() -> new RuntimeException("Project member not found- Project ID: " + projectId + " User ID: " + userId));
 
         projectMemberRepository.delete(member);
     }
-    
-    
-    //  LIST ALL MEMBERS OF A PROJECT 
+
+
+    //  LIST ALL MEMBERS OF A PROJECT
     // ===============================
-    
-    public List<ProjectMemberResponse> getMembersByProject(Long projectId) {
-        
+    public List<ProjectMemberResponse> getMembersByProject(Long projectId,User currentUser) {
+        checkHasAuthority(projectId,currentUser);
         return projectMemberRepository.findByProjectId(projectId)
         .stream()
         .map(this::mapperToResponse)
         .toList();
     }
-    //MAPPER FOR PROJECT MEMBERS
-    public ProjectMemberResponse mapperToResponse(ProjectMember member){
-        return ProjectMemberResponse.builder()
-                                    .memberId(member.getId())
-                                    .userId(member.getUser().getId())
-                                    .userName(member.getUser().getName())
-                                    .role(member.getProjectRole())
-                                    .addedAt(member.getCreatedAt())
-                                    .build();
-        
-    }
-   
-    //   USER DASHBOARD
-    // ==================
-    public List<UserProjectResponse> getProjectsForCurrentUser(Long userId) {
 
-        return projectMemberRepository.findByUserId(userId)
-                .stream()
-                .map(this::toUserProjectResponse)
-                .toList();
+    //MAPPER FOR PROJECT MEMBERS
+    public ProjectMemberResponse mapperToResponse(ProjectMember member) {
+        return ProjectMemberResponse.builder()
+                .memberId(member.getId())
+                .userId(member.getUser().getId())
+                .userName(member.getUser().getUsername())
+                .role(member.getProjectRole())
+                .addedAt(member.getCreatedAt())
+                .build();
     }
+
 
     // MAPPER FOR USER RESPONSE
     public UserProjectResponse toUserProjectResponse(ProjectMember member){
@@ -119,5 +116,22 @@ public class ProjectMemberService {
     public ProjectMember getMemberByProjectIdAndUserId(Long projectId,Long userId){
         return projectMemberRepository.findByProjectIdAndUserId(projectId,userId).orElseThrow(()-> new RuntimeException("member not found in project"));
     }
-    
+
+    public ProjectRole getUserRoleInProject(Long projectId, Long userId) {
+        return projectMemberRepository
+                .findUserRoleInProject(projectId, userId)
+                .orElseThrow(() ->
+                        new AccessDeniedException("User is not a member of this project")
+                );
+    }
+    //HELPERS
+    private void checkHasAuthority(Long projectId, User user) {
+        if( !user.getRoles().contains(Role.SUPER_MANAGER) || !user.getRoles().contains(Role.ADMIN)) {
+            return;
+        }
+        ProjectRole role = getUserRoleInProject(projectId, user.getId());
+        if(role != ProjectRole.PROJECT_MANAGER){
+            throw new AccessDeniedException("User does not have required roles to update Project.");
+        }
+    }
 }

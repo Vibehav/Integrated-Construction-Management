@@ -2,6 +2,7 @@ package com.vaibhav.icms.task.service;
 
 
 
+import com.vaibhav.icms.user.service.UserService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,12 @@ import com.vaibhav.icms.task.enums.TaskStatus;
 import com.vaibhav.icms.task.repository.TaskRepository;
 import com.vaibhav.icms.user.entity.User;
 import com.vaibhav.icms.user.enums.Role;
-import com.vaibhav.icms.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +38,16 @@ public class TaskService {
     private final ProjectMemberRepository projectMemberRepository;
     private final ProjectMemberService projectMemberService;
     private final ProjectRepository projectRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    //      Create a Task 
+    //      Create a Task
     // =======================
-   
+   /*
+   1. Check if Project Exists before creating a task
+   2. Check if Project Member is a Project Manager or Site Engineer.
+   3. assign
+   4. save
+    */
     public TaskResponse createTask(Long projectId, CreateTaskRequest request, User currentUser){
 
         Project project = projectRepository.findById(projectId).orElseThrow(()-> new RuntimeException("Project not found while creating task"));
@@ -47,6 +55,10 @@ public class TaskService {
         if(!projectMemberRepository.existsByProjectIdAndUserId(projectId, currentUser.getId())){
             throw new RuntimeException("Task Creator is not a member of this project");
         }
+
+        // Define which roles are allowed to create tasks
+        ensureCreatorRoleIsAuthenticated(projectId, currentUser);
+
 
         Task task = Task.builder()
                         .title(request.getTitle())
@@ -57,11 +69,28 @@ public class TaskService {
                         .project(project)
                         .deleted(false)
                         .build();
-        
+
         Task savedTask = taskRepository.save(task);
-        System.out.println(" ============================================== ");
         return taskMapperToResponse(savedTask);
 
+    }
+
+    private void ensureCreatorRoleIsAuthenticated(Long projectId, User currentUser) {
+        boolean flag = false;
+        Set<ProjectRole> canCreateTask = EnumSet.of(ProjectRole.PROJECT_MANAGER, ProjectRole.SITE_ENGINEER);
+
+        if (!canCreateTask.contains(projectMemberService.getUserRoleInProject(projectId, currentUser.getId()))) {
+            flag = true;
+        }
+        if(!currentUser.getRoles().contains(Role.SUPER_MANAGER) && !currentUser.getRoles().contains(Role.ADMIN)){
+            flag = true;
+        }
+
+        if(flag) {
+            return;
+        } else {
+            throw new AccessDeniedException("Insufficient permissions to create a task.");
+        }
     }
 
     //     Assign a Task
@@ -71,16 +100,18 @@ public class TaskService {
 
     1. Check if the task is present 
     2. check if the assignee id is present
-    3. Get the assignee Id and check if it is a project member or not
-    4. assignee
+    3. Get the assignee id and check if it is a project member or not
+    4. assignee and save
     */
    @Transactional  
-    public TaskResponse assignTask(Long projectId, Long taskId, AssignRequest request){ 
+    public TaskResponse assignTask(Long projectId, Long taskId,User currentUser, AssignRequest request){
         
         Task task = taskRepository.findByIdAndDeletedFalse(taskId).orElseThrow(() -> new RuntimeException("Task Not found."));
 
-        User assignee = userRepository.findById(request.getAssigneeId()).orElseThrow(()->new RuntimeException("Assignee not fount"));
+        //Roles which can assign tasks
+       ensureCreatorRoleIsAuthenticated(projectId,currentUser);
 
+       User assignee = userService.getUser(request.getAssigneeId());
         if(request.getAssigneeId() != null){
             boolean isMember = projectMemberRepository.existsByProjectIdAndUserId(projectId, request.getAssigneeId());
             if(!isMember) throw new IllegalArgumentException("The assigned user is not a member of this project.");
@@ -102,7 +133,7 @@ public class TaskService {
 
         ensureTaskInProject(task, projectId);
         ensureCanUpdateStatus(projectId,currentUser,task);
-        ensureValidTransation(task, request.getStatus());
+        ensureValidTransaction(task, request.getStatus());
         
         
         task.setStatus(request.getStatus());     
@@ -118,7 +149,8 @@ public class TaskService {
         Task task = getTaskOrThrow(taskId);
 
         ensureTaskInProject(task, projectId);
-        ensureCreatorOrManager(projectId,currentUser,task);
+
+        ensureCreatorRoleIsAuthenticated(projectId,currentUser);
 
         if(request.getTitle() !=null && !request.getTitle().isEmpty())task.setTitle(request.getTitle());
         if(request.getDescription()!=null && !request.getDescription().isEmpty())task.setDescription(request.getDescription());
@@ -131,9 +163,15 @@ public class TaskService {
 
     public void deleteTask(Long projectId,Long taskId,User currentUser){
         Task task = getTaskOrThrow(taskId);
-        ensureCreatorOrManager(projectId,currentUser, task);
+
+        //Roles which can assign tasks
+        Set<ProjectRole> assignTask = EnumSet.of(ProjectRole.PROJECT_MANAGER);
+
+        if (!assignTask.contains(projectMemberService.getUserRoleInProject(projectId, currentUser.getId())) || !currentUser.getRoles().contains(Role.ADMIN) || !currentUser.getRoles().contains(Role.SUPER_MANAGER)) {
+            throw new AccessDeniedException("Insufficient permissions to assign a task.");
+        }
         ensureTaskInProject(task,projectId);
-        
+
         task.setDeleted(true);
         taskRepository.save(task);
 
@@ -142,6 +180,7 @@ public class TaskService {
     public TaskResponse taskMapperToResponse(Task task){
         return TaskResponse.builder()
                            .id(task.getId())
+                           .title(task.getTitle())
                            .projectId(task.getProject().getId())
                            .assignee(task.getAssignee() != null ? task.getAssignee().getId() : null)
                            .createdBy(task.getCreatedBy().getId())
@@ -155,7 +194,7 @@ public class TaskService {
     // ==================== HELPERS ===============================
 
     private Task getTaskOrThrow(Long taskId){
-        return taskRepository.findByIdAndDeletedFalse(taskId).orElseThrow(() -> new IllegalArgumentException("Task Node Found"));   
+        return taskRepository.findByIdAndDeletedFalse(taskId).orElseThrow(() -> new IllegalArgumentException("Task Node Found"));
     }
 
     private void ensureTaskInProject(Task task, Long projectId){
@@ -164,16 +203,16 @@ public class TaskService {
         }
     }
 
-    // assign,projectManager,Afmin only these people can update
+    // assign,projectManager,Admin only these people can update
     private void ensureCanUpdateStatus(Long projectId, User currentUser, Task task){
-        
+
         //check if assignee can update
         if(task.getAssignee()!=null && task.getAssignee().getId().equals(currentUser.getId())){
             return;
         }
 
         //check for admin
-        if(currentUser.getRoles().contains(Role.ADMIN)){
+        if(currentUser.getRoles().contains(Role.ADMIN) || currentUser.getRoles().contains(Role.SUPER_MANAGER)){
             return;
         }
 
@@ -188,39 +227,14 @@ public class TaskService {
     }
 
     // CHECK IF THE TRANSACTION IS VALID
-    public void ensureValidTransation(Task task, TaskStatus nextStatus){
-        if(task.getStatus() == TaskStatus.COMPLETED){
-            throw new RuntimeException("Completed is Terminal");
+    public void ensureValidTransaction(Task task, TaskStatus nextStatus) {
+        if (task.getStatus() == TaskStatus.COMPLETED) {
+            throw new RuntimeException("Task has been Completed");
         }
 
-        if((nextStatus == TaskStatus.IN_PROGRESS || nextStatus == TaskStatus.COMPLETED) && task.getAssignee() != null) {
+        if ((nextStatus == TaskStatus.IN_PROGRESS || nextStatus == TaskStatus.COMPLETED) && task.getAssignee() == null) {
             throw new RuntimeException("First Assignee the User");
         }
 
-
-
     }
-
-    // Check while updating the task if the user is (Admin,project manager or has createdBy id same)
-    public void ensureCreatorOrManager(Long projectId, User currentUser, Task task){
-        if(task.getCreatedBy().getId().equals(currentUser.getId())){
-            return;
-        }
-
-        if(currentUser.getRoles().contains(Role.ADMIN) || currentUser.getRoles().contains(Role.PROJECT_MANAGER) ){
-            return;
-        }
-
-        ProjectMember member = projectMemberService.getMemberByProjectIdAndUserId(projectId, currentUser.getId());
-
-        if(member.getProjectRole() == ProjectRole.PROJECT_MANAGER) {return;}
-
-
-
-          throw new AccessDeniedException("Forbidden");
-    }
-
-
-
-
 }

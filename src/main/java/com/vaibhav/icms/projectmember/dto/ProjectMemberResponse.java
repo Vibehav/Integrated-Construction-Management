@@ -16,7 +16,6 @@ public class ProjectMemberResponse {
     private Long memberId;
     private Long userId;
     private String userName;
-    private String userEmail;
     private ProjectRole role;
     private LocalDateTime addedAt;
 
