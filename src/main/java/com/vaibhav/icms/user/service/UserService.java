@@ -5,13 +5,14 @@ package com.vaibhav.icms.user.service;
 import java .util.ArrayList;
 import java.util.List;
 
+import com.vaibhav.icms.exception.common.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.vaibhav.icms.exception.EmailAlreadyExistsException;
+import com.vaibhav.icms.exception.common.EmailAlreadyExistsException;
 import com.vaibhav.icms.user.dto.CreateUserRequest;
 import com.vaibhav.icms.user.dto.ProfileUpdateRequest;
 import com.vaibhav.icms.user.dto.ProfileUpdateResponse;
@@ -66,19 +67,19 @@ public class UserService implements UserDetailsService {
     }
 
     public UserResponse getUserById(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found with id:" + id));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id:" + id));
         return mapToResponse(user);
     }
     
     public UserResponse getUserByEmail(String email){
         User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new UsernameNotFoundException(email));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found by email: " + email));
         return mapToResponse(user);
     }
 
     public UserResponse updateUser(Long id, UpdateUserRequest request){
         User user = userRepository.findById(id)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found with id" + id));
+        .orElseThrow(() -> new ResourceNotFoundException("User not found with id" + id));
         
         if(!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists");
@@ -100,7 +101,7 @@ public class UserService implements UserDetailsService {
 
     public void deleteUser(Long id){
         if(!userRepository.existsById(id)){
-            throw new UsernameNotFoundException("user not found with id:" + id);
+            throw new ResourceNotFoundException("user not found with id:" + id);
         }
         userRepository.deleteById(id);
     }
@@ -108,7 +109,7 @@ public class UserService implements UserDetailsService {
     @Override // UserDetailsService is a Spring Security interface used to load a user from the database during authentication.
     public UserDetails loadUserByUsername(String email){
         return userRepository.findByEmail(email)
-               .orElseThrow(() -> new UsernameNotFoundException("username not found"));
+               .orElseThrow(() -> new ResourceNotFoundException("username not found with email " + email));
     }
 
     // Helper: Convert User → UserResponse

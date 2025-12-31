@@ -3,6 +3,7 @@ package com.vaibhav.icms.project.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vaibhav.icms.exception.common.ResourceNotFoundException;
 import com.vaibhav.icms.projectmember.entity.ProjectMember;
 import com.vaibhav.icms.projectmember.enums.ProjectRole;
 import com.vaibhav.icms.projectmember.repository.ProjectMemberRepository;
@@ -48,7 +49,7 @@ public class ProjectService {
     // update project
     public ProjectResponse updateProject(Long projectId,UpdateProjectRequest request,User user){
         Project project = projectRepository.findById(projectId)
-                                            .orElseThrow(() -> new RuntimeException("Id Not Found" + projectId));
+                                            .orElseThrow(() -> new ResourceNotFoundException("Id Not Found" + projectId));
 
         checkIsProjectManager(projectId, user);
 
@@ -69,7 +70,7 @@ public class ProjectService {
     // get Project
     public ProjectResponse getProject(Long id){
         Project project = projectRepository.findById(id)
-                                            .orElseThrow(() -> new RuntimeException("Project Id doesn't exists" + id));
+                                            .orElseThrow(() -> new ResourceNotFoundException("Project Id doesn't exists" + id));
         return mapToResponse(project);
     }
 
@@ -88,7 +89,7 @@ public class ProjectService {
     // delete project
     public void deleteProject(Long id) {
         if(!projectRepository.existsById(id)) {
-            throw new RuntimeException("Project's Id does Not exists" + id);
+            throw new ResourceNotFoundException("Project's Id does Not exists" + id);
         }
 
         projectRepository.deleteById(id);

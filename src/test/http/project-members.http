@@ -18,12 +18,12 @@ Authorization: Bearer {{token}}
 
 ### GET PROJECT MEMBERS
 ### ======================
-GET {{baseUrl}}/projects/8/members
+GET {{baseUrl}}/projects/{{projectId}}/members
 Authorization: Bearer {{token}}
 
 
 
 ### REMOVE PROJECT MEMBER
 ### ======================
-DELETE {{baseUrl}}/projects/8/members/{{userId}}
+DELETE {{baseUrl}}/projects/{{projectId}}/members/{{userId}}
 Authorization: Bearer {{token}}

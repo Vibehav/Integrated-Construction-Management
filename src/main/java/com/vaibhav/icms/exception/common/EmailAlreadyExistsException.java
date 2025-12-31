@@ -1,4 +1,4 @@
-package com.vaibhav.icms.exception;
+package com.vaibhav.icms.exception.common;
 
 public class EmailAlreadyExistsException extends RuntimeException {
 

@@ -2,6 +2,7 @@ package com.vaibhav.icms.task.service;
 
 
 
+import com.vaibhav.icms.exception.common.ResourceNotFoundException;
 import com.vaibhav.icms.user.service.UserService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -50,10 +51,10 @@ public class TaskService {
     */
     public TaskResponse createTask(Long projectId, CreateTaskRequest request, User currentUser){
 
-        Project project = projectRepository.findById(projectId).orElseThrow(()-> new RuntimeException("Project not found while creating task"));
+        Project project = projectRepository.findById(projectId).orElseThrow(()-> new ResourceNotFoundException("Project not found while creating task"));
 
         if(!projectMemberRepository.existsByProjectIdAndUserId(projectId, currentUser.getId())){
-            throw new RuntimeException("Task Creator is not a member of this project");
+            throw new ResourceNotFoundException("Task Creator is not a member of this project");
         }
 
         // Define which roles are allowed to create tasks

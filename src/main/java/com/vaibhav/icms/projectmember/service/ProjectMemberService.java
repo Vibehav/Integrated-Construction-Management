@@ -2,6 +2,8 @@ package com.vaibhav.icms.projectmember.service;
 
 import java.util.List;
 
+import com.vaibhav.icms.exception.common.ResourceNotFoundException;
+import com.vaibhav.icms.exception.common.UserAlreadyAssignedException;
 import com.vaibhav.icms.projectmember.enums.ProjectRole;
 import com.vaibhav.icms.user.enums.Role;
 import com.vaibhav.icms.user.service.UserService;
@@ -41,15 +43,15 @@ public class ProjectMemberService {
         checkHasAuthority(projectId, currentUser);
 
         // 1. validate project
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Project not found: " + projectId));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project not found: " + projectId));
 
         // 2. validate user
-        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException(" User Not Found by Id: " + request.getUserId()));
+        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new ResourceNotFoundException(" User Not Found by Id: " + request.getUserId()));
         // 3. check duplicate memberships
         boolean exists = projectMemberRepository.existsByProjectIdAndUserId(projectId, request.getUserId());
 
         if(exists) {  // create UserAlreadyAssignedException later
-            throw new RuntimeException("User already part of this project");
+            throw new UserAlreadyAssignedException("User already part of this project");
         }
         // 4. Create ProjectMember entity
         ProjectMember member = ProjectMember.builder()
@@ -73,7 +75,7 @@ public class ProjectMemberService {
     public void removeMember(Long projectId, Long userId, User currentUser){
 
         checkHasAuthority(projectId, currentUser);
-        ProjectMember member = projectMemberRepository.findByProjectIdAndUserId(projectId, userId).orElseThrow(() -> new RuntimeException("Project member not found- Project ID: " + projectId + " User ID: " + userId));
+        ProjectMember member = projectMemberRepository.findByProjectIdAndUserId(projectId, userId).orElseThrow(() -> new ResourceNotFoundException("Project member not found- Project ID: " + projectId + " User ID: " + userId));
 
         projectMemberRepository.delete(member);
     }
@@ -114,14 +116,14 @@ public class ProjectMemberService {
     // USED IN DIFFERENT CLASSES
 
     public ProjectMember getMemberByProjectIdAndUserId(Long projectId,Long userId){
-        return projectMemberRepository.findByProjectIdAndUserId(projectId,userId).orElseThrow(()-> new RuntimeException("member not found in project"));
+        return projectMemberRepository.findByProjectIdAndUserId(projectId,userId).orElseThrow(()-> new ResourceNotFoundException("member not found in project"));
     }
 
     public ProjectRole getUserRoleInProject(Long projectId, Long userId) {
         return projectMemberRepository
                 .findUserRoleInProject(projectId, userId)
                 .orElseThrow(() ->
-                        new AccessDeniedException("User is not a member of this project")
+                        new ResourceNotFoundException("User is not a member of this project")
                 );
     }
     //HELPERS
