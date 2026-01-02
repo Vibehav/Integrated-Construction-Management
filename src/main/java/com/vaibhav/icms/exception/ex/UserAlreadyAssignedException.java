@@ -1,4 +1,4 @@
-package com.vaibhav.icms.exception.common;
+package com.vaibhav.icms.exception.ex;
 
 public class UserAlreadyAssignedException extends RuntimeException {
     public UserAlreadyAssignedException(String message) {

@@ -1,8 +1,8 @@
 package com.vaibhav.icms.exception;
 
-import com.vaibhav.icms.exception.common.EmailAlreadyExistsException;
-import com.vaibhav.icms.exception.common.ResourceNotFoundException;
-import com.vaibhav.icms.exception.common.UserAlreadyAssignedException;
+import com.vaibhav.icms.exception.ex.EmailAlreadyExistsException;
+import com.vaibhav.icms.exception.ex.ResourceNotFoundException;
+import com.vaibhav.icms.exception.ex.UserAlreadyAssignedException;
 import com.vaibhav.icms.exception.dto.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

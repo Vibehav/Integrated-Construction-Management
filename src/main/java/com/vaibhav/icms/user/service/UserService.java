@@ -5,14 +5,14 @@ package com.vaibhav.icms.user.service;
 import java .util.ArrayList;
 import java.util.List;
 
-import com.vaibhav.icms.exception.common.ResourceNotFoundException;
+import com.vaibhav.icms.exception.ex.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.vaibhav.icms.exception.common.EmailAlreadyExistsException;
+import com.vaibhav.icms.exception.ex.EmailAlreadyExistsException;
 import com.vaibhav.icms.user.dto.CreateUserRequest;
 import com.vaibhav.icms.user.dto.ProfileUpdateRequest;
 import com.vaibhav.icms.user.dto.ProfileUpdateResponse;

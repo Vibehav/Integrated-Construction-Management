@@ -2,7 +2,8 @@ package com.vaibhav.icms.task.service;
 
 
 
-import com.vaibhav.icms.exception.common.ResourceNotFoundException;
+import com.vaibhav.icms.exception.ex.InvalidTaskOperationException;
+import com.vaibhav.icms.exception.ex.ResourceNotFoundException;
 import com.vaibhav.icms.user.service.UserService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -88,9 +89,9 @@ public class TaskService {
         }
 
         if(flag) {
-            return;
-        } else {
             throw new AccessDeniedException("Insufficient permissions to create a task.");
+        } else {
+           return;
         }
     }
 
@@ -107,7 +108,7 @@ public class TaskService {
    @Transactional  
     public TaskResponse assignTask(Long projectId, Long taskId,User currentUser, AssignRequest request){
         
-        Task task = taskRepository.findByIdAndDeletedFalse(taskId).orElseThrow(() -> new RuntimeException("Task Not found."));
+        Task task = taskRepository.findByIdAndDeletedFalse(taskId).orElseThrow(() -> new ResourceNotFoundException("Task Not found."));
 
         //Roles which can assign tasks
        ensureCreatorRoleIsAuthenticated(projectId,currentUser);
@@ -115,7 +116,7 @@ public class TaskService {
        User assignee = userService.getUser(request.getAssigneeId());
         if(request.getAssigneeId() != null){
             boolean isMember = projectMemberRepository.existsByProjectIdAndUserId(projectId, request.getAssigneeId());
-            if(!isMember) throw new IllegalArgumentException("The assigned user is not a member of this project.");
+            if(!isMember) throw new ResourceNotFoundException("The assigned user is not a member of this project.");
         }
 
         task.setAssignee(assignee);
@@ -195,12 +196,12 @@ public class TaskService {
     // ==================== HELPERS ===============================
 
     private Task getTaskOrThrow(Long taskId){
-        return taskRepository.findByIdAndDeletedFalse(taskId).orElseThrow(() -> new IllegalArgumentException("Task Node Found"));
+        return taskRepository.findByIdAndDeletedFalse(taskId).orElseThrow(() -> new ResourceNotFoundException("Task Node Found"));
     }
 
     private void ensureTaskInProject(Task task, Long projectId){
         if(!task.getProject().getId().equals(projectId)) {
-            throw new RuntimeException("Task does not belongs to the project");
+            throw new InvalidTaskOperationException("Task does not belongs to the project");
         }
     }
 

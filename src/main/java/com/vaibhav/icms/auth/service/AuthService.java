@@ -13,7 +13,7 @@ import com.vaibhav.icms.auth.dto.LoginRequest;
 import com.vaibhav.icms.auth.dto.LoginResponse;
 import com.vaibhav.icms.auth.dto.RegisterRequest;
 import com.vaibhav.icms.auth.util.JwtUtil;
-import com.vaibhav.icms.exception.common.EmailAlreadyExistsException;
+import com.vaibhav.icms.exception.ex.EmailAlreadyExistsException;
 import com.vaibhav.icms.user.entity.User;
 import com.vaibhav.icms.user.enums.Role;
 import com.vaibhav.icms.user.service.UserService;

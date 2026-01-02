@@ -3,10 +3,8 @@ package com.vaibhav.icms.project.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vaibhav.icms.exception.common.ResourceNotFoundException;
-import com.vaibhav.icms.projectmember.entity.ProjectMember;
+import com.vaibhav.icms.exception.ex.ResourceNotFoundException;
 import com.vaibhav.icms.projectmember.enums.ProjectRole;
-import com.vaibhav.icms.projectmember.repository.ProjectMemberRepository;
 import com.vaibhav.icms.projectmember.service.ProjectMemberService;
 import com.vaibhav.icms.user.entity.User;
 import com.vaibhav.icms.user.enums.Role;

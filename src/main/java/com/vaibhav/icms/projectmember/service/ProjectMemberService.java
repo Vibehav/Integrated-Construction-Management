@@ -1,9 +1,10 @@
 package com.vaibhav.icms.projectmember.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.vaibhav.icms.exception.common.ResourceNotFoundException;
-import com.vaibhav.icms.exception.common.UserAlreadyAssignedException;
+import com.vaibhav.icms.exception.ex.ResourceNotFoundException;
+import com.vaibhav.icms.exception.ex.UserAlreadyAssignedException;
 import com.vaibhav.icms.projectmember.enums.ProjectRole;
 import com.vaibhav.icms.user.enums.Role;
 import com.vaibhav.icms.user.service.UserService;
@@ -85,10 +86,14 @@ public class ProjectMemberService {
     // ===============================
     public List<ProjectMemberResponse> getMembersByProject(Long projectId,User currentUser) {
         checkHasAuthority(projectId,currentUser);
-        return projectMemberRepository.findByProjectId(projectId)
-        .stream()
-        .map(this::mapperToResponse)
-        .toList();
+        List<ProjectMember> members = projectMemberRepository.findByProjectId(projectId);
+        List<ProjectMemberResponse> responses = new ArrayList<>();
+
+        for(ProjectMember member:members){
+            ProjectMemberResponse response = mapperToResponse(member);
+            responses.add(response);
+        }
+        return responses;
     }
 
     //MAPPER FOR PROJECT MEMBERS
